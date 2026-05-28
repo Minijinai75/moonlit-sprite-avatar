@@ -68,7 +68,35 @@ function updateAvatars() {
 jQuery(function () {
     console.log(`[${MODULE_NAME}] Extension loaded. Using Invincible CSS Injection.`);
 
+    // 讀取設定，預設為開啟
+    let isEnabled = localStorage.getItem('moonlit_sprite_enable') !== 'false';
+
+    // 初始化 UI 開關狀態
+    const initUI = setInterval(function() {
+        const checkbox = document.getElementById('moonlit_sprite_enable');
+        if (checkbox && !checkbox.hasAttribute('data-initialized')) {
+            checkbox.checked = isEnabled;
+            checkbox.setAttribute('data-initialized', 'true');
+            clearInterval(initUI);
+        }
+    }, 1000);
+
+    // 監聽開關切換
+    jQuery(document).on('change', '#moonlit_sprite_enable', function() {
+        isEnabled = jQuery(this).is(':checked');
+        localStorage.setItem('moonlit_sprite_enable', isEnabled);
+        
+        if (isEnabled) {
+            updateAvatars();
+        } else {
+            // 關閉時，清除所有注入的 CSS 標籤
+            document.querySelectorAll('style[id^="moonlit-sprite-styles-"]').forEach(el => el.remove());
+        }
+    });
+
     const observer = new MutationObserver((mutations) => {
+        if (!isEnabled) return;
+        
         mutations.forEach((mutation) => {
             if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
                 updateAvatars();
@@ -83,7 +111,9 @@ jQuery(function () {
             clearInterval(checkExist);
             
             // 找到立繪圖片後，不用等它改變，馬上直接執行一次替換！
-            setTimeout(updateAvatars, 100);
+            if (isEnabled) {
+                setTimeout(updateAvatars, 100);
+            }
         }
     }, 1000);
 
