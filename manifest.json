@@ -2,8 +2,8 @@
     "name": "Moonlit Sprite Avatar",
     "display_name": "Moonlit Sprite Avatar",
     "description": "Replaces character avatars in chat with their active expression sprites. Best used with the Moonlit Echoes/Ripple theme.",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "author": "Antigravity",
-    "main": "index.js",
+    "js": "index.js",
     "requires": []
 }

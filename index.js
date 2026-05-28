@@ -7,16 +7,16 @@ const MODULE_NAME = 'moonlit-sprite-avatar';
 function injectSpriteCSS(characterName, spriteUrl) {
     if (!characterName || !spriteUrl) return;
 
-    let styleEl = document.getElementById('moonlit-sprite-styles');
+    // 注意：不要使用 CSS.escape，因為這會把中文在屬性選擇器中變為錯誤格式。只需替換雙引號即可。
+    const safeName = characterName.replace(/"/g, '\\"');
+
+    const styleId = `moonlit-sprite-styles-${safeName.replace(/\W/g, '')}`;
+    let styleEl = document.getElementById(styleId);
     if (!styleEl) {
         styleEl = document.createElement('style');
-        styleEl.id = 'moonlit-sprite-styles';
+        styleEl.id = styleId;
         document.head.appendChild(styleEl);
     }
-
-    // 針對特定的角色名稱，強制替換它的所有頭像變數與 img 內容
-    // 注意：使用 CSS.escape 來避免名稱中有特殊字元導致 CSS 破壞
-    const safeName = CSS.escape(characterName);
     
     styleEl.innerHTML = `
         /* 覆寫 Ripple 主題依賴的 CSS 變數 */
