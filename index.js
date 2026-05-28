@@ -85,18 +85,20 @@ function updateAvatars() {
 jQuery(function () {
     console.log('[' + MODULE_NAME + '] Extension loaded. Using Invincible CSS Injection.');
 
-    // 讀取設定，預設為開啟
-    let isEnabled = localStorage.getItem('moonlit_sprite_enable') !== 'false';
-
-    // 初始化 UI 開關狀態
-    const initUI = setInterval(function() {
-        const checkbox = document.getElementById('moonlit_sprite_enable');
-        if (checkbox && !checkbox.hasAttribute('data-initialized')) {
+    // 載入擴充面板 UI（SillyTavern 不會自動讀取 index.html，需要手動注入）
+    var extensionFolder = 'third-party/' + MODULE_NAME;
+    jQuery.get(extensionFolder + '/index.html', function(html) {
+        jQuery('#extensions_settings2').append(html);
+        
+        // UI 載入完成後，初始化開關狀態
+        var checkbox = document.getElementById('moonlit_sprite_enable');
+        if (checkbox) {
             checkbox.checked = isEnabled;
-            checkbox.setAttribute('data-initialized', 'true');
-            clearInterval(initUI);
         }
-    }, 1000);
+    });
+
+    // 讀取設定，預設為開啟
+    var isEnabled = localStorage.getItem('moonlit_sprite_enable') !== 'false';
 
     // 監聽開關切換
     jQuery(document).on('change', '#moonlit_sprite_enable', function() {
