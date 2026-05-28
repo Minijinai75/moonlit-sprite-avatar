@@ -1,5 +1,3 @@
-import { eventSource, event_types } from '../../../script.js';
-
 const MODULE_NAME = 'moonlit-sprite-avatar';
 
 // 使用注入 CSS 的方式，這是最無敵的，因為即使 Cocktail 或 Moonlit 覆寫了 DOM 結構，
@@ -76,7 +74,4 @@ jQuery(function () {
         }
     }, 1000);
 
-    eventSource.on(event_types.CHAT_CHANGED, () => setTimeout(updateAvatars, 500));
-    eventSource.on(event_types.MESSAGE_RECEIVED, () => setTimeout(updateAvatars, 500));
-    eventSource.on(event_types.MESSAGE_UPDATED, () => setTimeout(updateAvatars, 500));
 });
