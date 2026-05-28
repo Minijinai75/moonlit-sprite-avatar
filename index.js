@@ -85,20 +85,28 @@ function updateAvatars() {
 jQuery(function () {
     console.log('[' + MODULE_NAME + '] Extension loaded. Using Invincible CSS Injection.');
 
-    // 載入擴充面板 UI（SillyTavern 不會自動讀取 index.html，需要手動注入）
-    var extensionFolder = 'third-party/' + MODULE_NAME;
-    jQuery.get(extensionFolder + '/index.html', function(html) {
-        jQuery('#extensions_settings2').append(html);
-        
-        // UI 載入完成後，初始化開關狀態
-        var checkbox = document.getElementById('moonlit_sprite_enable');
-        if (checkbox) {
-            checkbox.checked = isEnabled;
-        }
-    });
-
     // 讀取設定，預設為開啟
     var isEnabled = localStorage.getItem('moonlit_sprite_enable') !== 'false';
+
+    // 直接用 JS 建立 UI，不依賴外部 HTML 檔案（避免 Zeabur 路徑問題）
+    var settingsHtml = '<div class="moonlit-sprite-avatar-settings">' +
+        '<div class="inline-drawer">' +
+            '<div class="inline-drawer-toggle inline-drawer-header">' +
+                '<b>Moonlit Sprite Avatar</b>' +
+                '<div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>' +
+            '</div>' +
+            '<div class="inline-drawer-content">' +
+                '<div class="flex-container">' +
+                    '<label class="checkbox_label">' +
+                        '<input type="checkbox" id="moonlit_sprite_enable" ' + (isEnabled ? 'checked' : '') + '>' +
+                        '<span>啟用立繪取代頭像 (Enable Sprite Avatar)</span>' +
+                    '</label>' +
+                '</div>' +
+                '<small style="opacity:0.7;margin-top:4px;display:block;">開啟後，對話框頭像會自動同步為角色當前的表情立繪。</small>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+    jQuery('#extensions_settings2').append(settingsHtml);
 
     // 監聽開關切換
     jQuery(document).on('change', '#moonlit_sprite_enable', function() {
