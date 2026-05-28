@@ -1,4 +1,4 @@
-import { eventSource, event_types } from '../../../../script.js';
+import { eventSource, event_types } from '../../../script.js';
 
 const MODULE_NAME = 'moonlit-sprite-avatar';
 
@@ -13,7 +13,7 @@ function updateAvatars() {
 
     if (!currentSpriteSrc || !characterName) return;
 
-    // 尋找對話框中屬於該角色的所有訊息頭像
+    // 尋找對話框中屬於該角色的所有訊息
     const messages = document.querySelectorAll('.mes[is_user="false"]');
     
     messages.forEach(mes => {
@@ -21,17 +21,19 @@ function updateAvatars() {
         
         // 比對名稱，確認是同一個角色的對話框
         if (nameElement && nameElement.textContent.trim() === characterName) {
-            const avatarImg = mes.querySelector('.avatar img');
             
-            if (avatarImg) {
-                // 如果目前頭像還不是最新的立繪，就進行替換
-                if (avatarImg.src !== currentSpriteSrc) {
-                    avatarImg.src = currentSpriteSrc;
-                    
-                    // 為了配合 Ripple 主題的圓形遮罩，強制調整圖片顯示方式
-                    avatarImg.style.objectFit = 'cover';
-                    avatarImg.style.objectPosition = 'top center'; // 讓立繪盡量以臉部為主
-                }
+            // 針對 Ripple 主題：更新 CSS 變數，因為 Ripple 是透過這些變數來繪製頭像的
+            mes.style.setProperty('--mes-avatar-url', `url('${currentSpriteSrc}')`);
+            mes.style.setProperty('--mes-avatar-original-url', `url('${currentSpriteSrc}')`);
+            mes.style.setProperty('--mes-avatar-thumb-url', `url('${currentSpriteSrc}')`);
+            mes.dataset.avatar = currentSpriteSrc;
+
+            // 同時也更新 img 元素 (預防萬一)
+            const avatarImg = mes.querySelector('.avatar img');
+            if (avatarImg && avatarImg.src !== currentSpriteSrc) {
+                avatarImg.src = currentSpriteSrc;
+                avatarImg.style.objectFit = 'cover';
+                avatarImg.style.objectPosition = 'top center';
             }
         }
     });
@@ -41,7 +43,6 @@ jQuery(function () {
     console.log(`[${MODULE_NAME}] Extension loaded.`);
 
     // 使用 MutationObserver 監聽立繪圖片的變化
-    // 這樣每當角色切換表情立繪時，頭像也會跟著變
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.type === 'attributes' && mutation.attributeName === 'src') {
