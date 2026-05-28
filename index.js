@@ -70,6 +70,9 @@ jQuery(function () {
         if (expressionImage) {
             observer.observe(expressionImage, { attributes: true });
             clearInterval(checkExist);
+            
+            // 找到立繪圖片後，不用等它改變，馬上直接執行一次替換！
+            setTimeout(updateAvatars, 100);
         }
     }, 1000);
 
