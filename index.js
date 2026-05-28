@@ -24,11 +24,24 @@ function injectSpriteCSS(characterName, spriteUrl) {
             --mes-avatar-thumb-url: url('${spriteUrl}') !important;
         }
         
-        /* 直接覆寫圖片元素 (防禦 Cocktail 或其他腳本) */
+        /* 1. 直接覆寫圖片元素 (防禦常規酒館設定) */
         .mes[is_user="false"][ch_name="${safeName}"] .avatar img {
             content: url('${spriteUrl}') !important;
             object-fit: cover !important;
             object-position: top center !important;
+        }
+
+        /* 2. 防禦 Cocktail 或某些主題把圖片設為 .avatar 背景的情況 */
+        .mes[is_user="false"][ch_name="${safeName}"] .avatar {
+            background-image: url('${spriteUrl}') !important;
+            background-size: cover !important;
+            background-position: top center !important;
+        }
+
+        /* 3. 防禦 Ripple 主題可能直接把背景畫在偽元素上的情況 */
+        .mes[is_user="false"][ch_name="${safeName}"] .mes_text::before,
+        .mes[is_user="false"][ch_name="${safeName}"]::before {
+            background-image: url('${spriteUrl}') !important;
         }
     `;
 }
